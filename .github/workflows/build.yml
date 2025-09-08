@@ -1,0 +1,71 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - v*
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: pblboot
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: Setup Zephyr project
+        uses: zephyrproject-rtos/action-zephyr-setup@v1
+        with:
+          app-path: pblboot
+          toolchains: arm-zephyr-eabi
+
+      - name: Build firmware
+        working-directory: pblboot
+        run: |
+          west twister -T boot -v --inline-logs --integration
+
+      - name: Prepare artifacts
+        working-directory: pblboot
+        run: |
+          mkdir artifacts
+          cp twister-out/pt2*/zephyr/pblboot/boot/boot.default/zephyr/zephyr.hex \
+             artifacts/pblboot-pt2-${{ github.ref_name }}.hex
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pblboot
+          path: pblboot/artifacts
+
+  release:
+    runs-on: ubuntu-24.04
+
+    if: startsWith(github.event.ref, 'refs/tags/v')
+
+    needs: build
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Display artifacts
+        run: ls -R
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2.2.2
+        with:
+          files: pblboot/*

@@ -1,0 +1,23 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu
+
+module = PBLBOOT
+module-str = pblboot
+source "subsys/logging/Kconfig.template.log_config"
+
+config PB_FLASH_READ_BUF_SIZE
+	int "Flash read buffer size"
+	default 512
+	help
+	  Size of the flash read buffer.
+
+config PB_PRF_BUTTON_COMBO_TIME_MS
+	int "PRF button combo time (ms)"
+	default 5000
+	help
+	  Time in milliseconds that the PRF button combo must be held to trigger
+	  a PRF load.

@@ -1,0 +1,8 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+build:
+  kconfig: Kconfig
+  cmake: .
+  settings:
+    board_root: .

@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2025 Core Devices LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	chosen {
+		/* we are the bootloader */
+		zephyr,code-partition = &boot;
+
+		/* slots */
+		pb,slot0 = &slot0;
+		pb,slot1 = &slot1;
+		pb,prf = &prf;
+
+		/* buttons */
+		pb,btn-back = &btn_back;
+		pb,btn-up = &btn_up;
+		pb,btn-center = &btn_center;
+		pb,btn-down = &btn_down;
+	};
+};

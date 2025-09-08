@@ -1,0 +1,12 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+sample:
+  description: PebbleOS bootloader
+  name: pblboot
+common:
+  build_only: true
+  integration_platforms:
+    - pt2
+tests:
+  boot.default: {}

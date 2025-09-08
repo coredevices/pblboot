@@ -1,0 +1,19 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+config PB_BOOTBIT
+    bool "Boot bit library"
+    help
+      Enable the boot bit library.
+
+
+if PB_BOOTBIT
+
+config PB_BOOTBIT_SF32LB
+    bool "Boot bit SF32LB backend"
+    default y if SOC_FAMILY_SF32
+    depends on SOC_FAMILY_SF32
+    help
+      Enable boot bit SF32LB backend.
+
+endif # BOOTBIT

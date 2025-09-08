@@ -1,0 +1,16 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  remotes:
+    - name: teslabs
+      url-base: https://github.com/teslabs
+
+  projects:
+    - name: zephyr
+      remote: teslabs
+      revision: sf32lb52x-flash
+      import:
+        name-allowlist:
+          - cmsis_6
+          - hal_sifli

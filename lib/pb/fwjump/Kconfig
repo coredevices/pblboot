@@ -1,0 +1,19 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+config PB_FWJUMP
+    bool "Firmware jump library"
+    help
+      Enable the firmware jump library.
+
+
+if PB_FWJUMP
+
+config PB_FWJUMP_ARM_CM
+    bool "Firmware jump ARM Cortex-M backend"
+    default y if CPU_CORTEX_M
+    depends on CPU_CORTEX_M
+    help
+      Enable the firmware jump ARM Cortex-M backend.
+
+endif # PB_FWJUMP
