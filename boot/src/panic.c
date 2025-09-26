@@ -12,6 +12,15 @@
 
 LOG_MODULE_DECLARE(pblboot, CONFIG_PBLBOOT_LOG_LEVEL);
 
+/* override Zephyr's default fatal error handler */
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
+{
+	ARG_UNUSED(reason);
+	ARG_UNUSED(esf);
+
+	pb_panic();
+}
+
 void FUNC_NORETURN pb_panic(void)
 {
 	LOG_ERR("System panic, press any button to reset");
