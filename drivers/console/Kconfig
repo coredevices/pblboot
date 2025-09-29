@@ -1,0 +1,24 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig CONSOLE_EXT
+	bool "Console Drivers (external)"
+	default y if CONSOLE
+	help
+	  Enable external console drivers.
+
+if CONSOLE_EXT
+
+config PULSE_UART_CONSOLE
+	bool "Pulse UART Console Driver"
+	depends on SERIAL && SERIAL_HAS_DRIVER
+	depends on CRC
+	select PB_COBS
+	select CONSOLE_HAS_DRIVER
+	help
+	  Enable the Pulse UART console driver.
+
+	  This driver provides console output over a UART interface using the
+	  Pulse protocol.
+
+endif # CONSOLE_EXT
