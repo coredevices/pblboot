@@ -18,12 +18,12 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 	ARG_UNUSED(reason);
 	ARG_UNUSED(esf);
 
-	pb_panic();
+	pb_panic(PB_PANIC_REASON_SYSTEM(reason));
 }
 
-void FUNC_NORETURN pb_panic(void)
+void FUNC_NORETURN pb_panic(pb_panic_reason_t reason)
 {
-	LOG_ERR("System panic, press any button to reset");
+	LOG_ERR("System panic (0x%08x), press any button to reset", reason);
 
 	while (1) {
 		if (pb_buttons_any_pressed()) {

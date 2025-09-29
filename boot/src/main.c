@@ -34,7 +34,7 @@ int main(void)
 	ret = pb_firmware_init();
 	if (ret < 0) {
 		LOG_ERR("Failed to initialize firmware module (err %d)", ret);
-		pb_panic();
+		pb_panic(PB_PANIC_REASON_INIT_FAIL);
 	}
 
 	/* firmware/PRF start failures */
@@ -53,7 +53,7 @@ int main(void)
 
 			if (cnt == PB_BOOTBIT_PRF_FAIL_CNT_MAX) {
 				pb_bootbit_prf_fail_cnt_set(0U);
-				pb_panic();
+				pb_panic(PB_PANIC_REASON_PRF_UNSTABLE);
 			} else {
 				cnt++;
 				pb_bootbit_prf_fail_cnt_set(cnt);
@@ -88,7 +88,7 @@ int main(void)
 		ret = pb_firmware_load_prf();
 		if (ret < 0) {
 			LOG_ERR("Failed to load PRF (err %d)", ret);
-			pb_panic();
+			pb_panic(PB_PANIC_REASON_PRF_LOAD_FAIL(ret));
 		}
 	}
 
@@ -97,7 +97,7 @@ int main(void)
 	if (rst_loop_cnt == PB_BOOTBIT_RESET_LOOP_CNT_MAX) {
 		LOG_ERR("Reset loop detected");
 		pb_bootbit_reset_loop_cnt_set(0U);
-		pb_panic();
+		pb_panic(PB_PANIC_REASON_RESET_LOOP);
 	} else {
 		rst_loop_cnt++;
 		pb_bootbit_reset_loop_cnt_set(rst_loop_cnt);
@@ -107,7 +107,7 @@ int main(void)
 	ret = pb_firmware_load();
 	if (ret < 0) {
 		LOG_ERR("Failed to load firmware (err %d)", ret);
-		pb_panic();
+		pb_panic(PB_PANIC_REASON_FW_LOAD_FAIL(ret));
 	}
 
 	return 0;
