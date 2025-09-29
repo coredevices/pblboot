@@ -20,7 +20,7 @@ LOG_MODULE_REGISTER(pblboot, CONFIG_PBLBOOT_LOG_LEVEL);
 int main(void)
 {
 	uint8_t rst_loop_cnt;
-	bool prf_requested;
+	bool prf_requested = false;
 	int ret;
 
 	LOG_INF("PebbleOS bootloader %s", APP_VERSION_STRING);
@@ -37,47 +37,51 @@ int main(void)
 		pb_panic();
 	}
 
-	/* PRF start failures */
-	if (pb_bootbit_prf_starting_tst_and_clr()) {
-		LOG_ERR("PRF start failed");
-		pb_panic();
-	}
-
-	/* firmware start failures */
+	/* firmware/PRF start failures */
 	if (pb_bootbit_fw_stable_tst_and_clr()) {
-		LOG_INF("Last firmware boot was stable; clear strikes");
+		LOG_INF("Last firmware or PRF boot was stable; clear strikes");
 
 		pb_bootbit_fw_fail_cnt_set(0U);
 		pb_bootbit_prf_fail_cnt_set(0U);
 	} else if (pb_bootbit_fw_fail_tst_and_clr()) {
 		uint8_t cnt;
 
-		cnt = pb_bootbit_fw_fail_cnt_get();
+		if (pb_bootbit_prf_starting_tst_and_clr()) {
+			cnt = pb_bootbit_prf_fail_cnt_get();
+			LOG_ERR("PRF failure caused a reset (strikes: %" PRIu8 "/%" PRIu8 ")", cnt,
+				PB_BOOTBIT_PRF_FAIL_CNT_MAX);
 
-		LOG_ERR("Firmware failure caused a reset (strikes: %" PRIu8 ")", cnt);
-
-		if (cnt == PB_BOOTBIT_FW_FAIL_CNT_MAX) {
-			pb_bootbit_fw_fail_cnt_set(0U);
-
-			ret = pb_firmware_load_prf();
-			if (ret < 0) {
-				LOG_ERR("Failed to load PRF (err %d)", ret);
+			if (cnt == PB_BOOTBIT_PRF_FAIL_CNT_MAX) {
+				pb_bootbit_prf_fail_cnt_set(0U);
 				pb_panic();
+			} else {
+				cnt++;
+				pb_bootbit_prf_fail_cnt_set(cnt);
+				prf_requested = true;
 			}
 		} else {
-			cnt++;
-			pb_bootbit_fw_fail_cnt_set(cnt);
+			cnt = pb_bootbit_fw_fail_cnt_get();
+			LOG_ERR("Firmware failure caused a reset (strikes: %" PRIu8 "/%" PRIu8 ")",
+				cnt, PB_BOOTBIT_FW_FAIL_CNT_MAX);
+
+			if (cnt == PB_BOOTBIT_FW_FAIL_CNT_MAX) {
+				pb_bootbit_fw_fail_cnt_set(0U);
+				prf_requested = true;
+			} else {
+				cnt++;
+				pb_bootbit_fw_fail_cnt_set(cnt);
+			}
 		}
 	}
 
-	/* prf request */
-	prf_requested = false;
-
-	if (pb_bootbit_force_prf_tst_and_clr()) {
-		LOG_INF("Forced PRF load requested");
-		prf_requested = true;
-	} else if (pb_buttons_prf_requested()) {
-		prf_requested = true;
+	/* prf manual requests */
+	if (!prf_requested) {
+		if (pb_bootbit_force_prf_tst_and_clr()) {
+			LOG_INF("Forced PRF load requested");
+			prf_requested = true;
+		} else if (pb_buttons_prf_requested()) {
+			prf_requested = true;
+		}
 	}
 
 	if (prf_requested) {
