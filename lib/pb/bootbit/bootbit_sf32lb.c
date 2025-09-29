@@ -4,6 +4,7 @@
  */
 
 #include <zephyr/arch/cpu.h>
+#include <zephyr/sys/util.h>
 
 #include <pb/bootbit.h>
 
@@ -15,7 +16,7 @@
 void pb_bootbit_init(void)
 {
 	if (!pb_bootbit_tst(PB_BOOTBIT_INITIALIZED)) {
-		sys_write32(RTC_BASE + RTC_BKP2R, PB_BOOTBIT_INITIALIZED);
+		sys_write32(RTC_BASE + RTC_BKP2R, BIT(PB_BOOTBIT_INITIALIZED));
 	}
 }
 

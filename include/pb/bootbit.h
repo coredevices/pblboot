@@ -8,8 +8,6 @@
 
 #include <stdbool.h>
 
-#include <zephyr/sys/util.h>
-
 /** Maximum firmware failure count value */
 #define PB_BOOTBIT_FW_FAIL_CNT_MAX    3U
 /** Maximum PRF failure count value */
@@ -25,37 +23,37 @@
  */
 enum pb_bootbit {
 	/** Bootbits have been initialized */
-	PB_BOOTBIT_INITIALIZED = BIT(0),
+	PB_BOOTBIT_INITIALIZED = 0,
 	/** New firmware is available for installation */
-	PB_BOOTBIT_NEW_FW_AVAILABLE = BIT(1),
+	PB_BOOTBIT_NEW_FW_AVAILABLE = 1,
 	/** Firmware update is currently in progress */
-	PB_BOOTBIT_NEW_FW_UPDATE_IN_PROGRESS = BIT(2),
+	PB_BOOTBIT_NEW_FW_UPDATE_IN_PROGRESS = 2,
 	/** Firmware start failure counter (bit 0) */
-	PB_BOOTBIT_FW_START_FAIL_STRIKE_ONE = BIT(3),
+	PB_BOOTBIT_FW_START_FAIL_STRIKE_ONE = 3,
 	/** Firmware start failure counter (bit 1) */
-	PB_BOOTBIT_FW_START_FAIL_STRIKE_TWO = BIT(4),
+	PB_BOOTBIT_FW_START_FAIL_STRIKE_TWO = 4,
 	/** PRF firmware start failure counter (bit 0) */
-	PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_ONE = BIT(5),
+	PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_ONE = 5,
 	/** PRF firmware start failure counter (bit 1) */
-	PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_TWO = BIT(6),
+	PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_TWO = 6,
 	/** Recovery start is in progress */
-	PB_BOOTBIT_RECOVERY_START_IN_PROGRESS = BIT(7),
+	PB_BOOTBIT_RECOVERY_START_IN_PROGRESS = 7,
 	/** A software failure has occurred */
-	PB_BOOTBIT_SOFTWARE_FAILURE_OCCURRED = BIT(9),
+	PB_BOOTBIT_SOFTWARE_FAILURE_OCCURRED = 9,
 	/** Reset loop detection counter (bit 0) */
-	PB_BOOTBIT_RESET_LOOP_DETECT_ONE = BIT(11),
+	PB_BOOTBIT_RESET_LOOP_DETECT_ONE = 11,
 	/** Reset loop detection counter (bit 2) */
-	PB_BOOTBIT_RESET_LOOP_DETECT_TWO = BIT(12),
+	PB_BOOTBIT_RESET_LOOP_DETECT_TWO = 12,
 	/** Reset loop detection counter (bit 3) */
-	PB_BOOTBIT_RESET_LOOP_DETECT_THREE = BIT(13),
+	PB_BOOTBIT_RESET_LOOP_DETECT_THREE = 13,
 	/** Firmware is stable and running correctly */
-	PB_BOOTBIT_FW_STABLE = BIT(14),
+	PB_BOOTBIT_FW_STABLE = 14,
 	/** New firmware has been successfully installed */
-	PB_BOOTBIT_NEW_FW_INSTALLED = BIT(15),
+	PB_BOOTBIT_NEW_FW_INSTALLED = 15,
 	/** Force entry into PRF */
-	PB_BOOTBIT_FORCE_PRF = BIT(17),
+	PB_BOOTBIT_FORCE_PRF = 17,
 	/** New PRF is available for installation */
-	PB_BOOTBIT_NEW_PRF_AVAILABLE = BIT(18),
+	PB_BOOTBIT_NEW_PRF_AVAILABLE = 18,
 };
 
 /**
@@ -96,7 +94,7 @@ static inline uint8_t pb_bootbit_fw_fail_cnt_get(void)
 {
 	uint8_t cnt;
 
-	cnt = (!!pb_bootbit_tst(PB_BOOTBIT_FW_START_FAIL_STRIKE_ONE) << 0U) +
+	cnt = (!!pb_bootbit_tst(PB_BOOTBIT_FW_START_FAIL_STRIKE_ONE) << 0U) |
 	      (!!pb_bootbit_tst(PB_BOOTBIT_FW_START_FAIL_STRIKE_TWO) << 1U);
 
 	return cnt;
@@ -131,7 +129,7 @@ static inline uint8_t pb_bootbit_prf_fail_cnt_get(void)
 {
 	uint8_t cnt;
 
-	cnt = (!!pb_bootbit_tst(PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_ONE) << 0U) +
+	cnt = (!!pb_bootbit_tst(PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_ONE) << 0U) |
 	      (!!pb_bootbit_tst(PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_TWO) << 1U);
 
 	return cnt;
@@ -210,8 +208,8 @@ static inline uint8_t pb_bootbit_reset_loop_cnt_get(void)
 {
 	uint8_t cnt;
 
-	cnt = (!!pb_bootbit_tst(PB_BOOTBIT_RESET_LOOP_DETECT_ONE) << 0U) +
-	      (!!pb_bootbit_tst(PB_BOOTBIT_RESET_LOOP_DETECT_TWO) << 1U) +
+	cnt = (!!pb_bootbit_tst(PB_BOOTBIT_RESET_LOOP_DETECT_ONE) << 0U) |
+	      (!!pb_bootbit_tst(PB_BOOTBIT_RESET_LOOP_DETECT_TWO) << 1U) |
 	      (!!pb_bootbit_tst(PB_BOOTBIT_RESET_LOOP_DETECT_THREE) << 2U);
 
 	return cnt;
