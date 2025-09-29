@@ -25,6 +25,8 @@ int main(void)
 
 	LOG_INF("PebbleOS bootloader %s", APP_VERSION_STRING);
 
+	pb_bootbit_init();
+
 	ret = pb_buttons_init();
 	if (ret < 0) {
 		LOG_ERR("Failed to initialize buttons module (err %d)", ret);

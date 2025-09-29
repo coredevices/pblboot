@@ -59,6 +59,11 @@ enum pb_bootbit {
 };
 
 /**
+ * @brief Initialize the boot bits system.
+ */
+void pb_bootbit_init(void);
+
+/**
  * @brief Set the specified boot bit.
  *
  * @param bit Boot bit.
