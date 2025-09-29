@@ -31,6 +31,8 @@ int main(void)
 		return 0;
 	}
 
+	pb_panic_init();
+
 	ret = pb_firmware_init();
 	if (ret < 0) {
 		LOG_ERR("Failed to initialize firmware module (err %d)", ret);

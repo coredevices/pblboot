@@ -44,6 +44,11 @@
 typedef uint32_t pb_panic_reason_t;
 
 /**
+ * @brief Initialize the panic handling system
+ */
+void pb_panic_init(void);
+
+/**
  * @brief Panics the system
  */
 void FUNC_NORETURN pb_panic(pb_panic_reason_t reason);
