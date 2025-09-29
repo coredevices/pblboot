@@ -124,7 +124,13 @@ The bootloader validates both slots and selects firmware based on:
 flowchart TD
     Start([Bootloader Start]) --> Init[Initialize Components]
 
-    Init --> CheckStable{Was last boot<br/>stable?}
+    Init --> CheckResetLoop{Check reset<br/>loop counter}
+    CheckResetLoop --> IncResetCnt[Increment reset counter]
+    IncResetCnt --> CheckResetMax{Reached max<br/>resets?}
+    CheckResetMax -->|Yes| PanicResetLoop[Panic: Reset Loop]
+    CheckResetMax -->|No| CheckStable
+
+    CheckStable{Was last boot<br/>stable?}
     CheckStable -->|Yes| ClearStrikes[Clear all failure counters]
     CheckStable -->|No| CheckFailure{Check failure type}
 
@@ -147,18 +153,12 @@ flowchart TD
     ManualPRFCheck{Manual PRF<br/>requested?}
     ManualPRFCheck -->|Force flag set| LoadPRF
     ManualPRFCheck -->|Button pressed| LoadPRF
-    ManualPRFCheck -->|No| CheckResetLoop
+    ManualPRFCheck -->|No| LoadFW
 
     LoadPRF[Load PRF]
     LoadPRF --> LoadPRFResult{PRF load<br/>successful?}
     LoadPRFResult -->|No| PanicPRFLoad[Panic: PRF Load Failed]
     LoadPRFResult -->|Yes| End([Boot Complete])
-
-    CheckResetLoop{Check reset<br/>loop counter}
-    CheckResetLoop --> IncResetCnt[Increment reset counter]
-    IncResetCnt --> CheckResetMax{Reached max<br/>resets?}
-    CheckResetMax -->|Yes| PanicResetLoop[Panic: Reset Loop]
-    CheckResetMax -->|No| LoadFW
 
     LoadFW[Load Firmware]
     LoadFW --> LoadFWResult{FW load<br/>successful?}

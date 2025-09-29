@@ -39,6 +39,17 @@ int main(void)
 		pb_panic(PB_PANIC_REASON_INIT_FAIL);
 	}
 
+	/* reset loop counter handling */
+	rst_loop_cnt = pb_bootbit_reset_loop_cnt_get();
+	if (rst_loop_cnt == PB_BOOTBIT_RESET_LOOP_CNT_MAX) {
+		LOG_ERR("Reset loop detected");
+		pb_bootbit_reset_loop_cnt_set(0U);
+		pb_panic(PB_PANIC_REASON_RESET_LOOP);
+	} else {
+		rst_loop_cnt++;
+		pb_bootbit_reset_loop_cnt_set(rst_loop_cnt);
+	}
+
 	/* firmware/PRF start failures */
 	if (pb_bootbit_fw_stable_tst_and_clr()) {
 		LOG_INF("Last firmware or PRF boot was stable; clear strikes");
@@ -92,17 +103,6 @@ int main(void)
 			LOG_ERR("Failed to load PRF (err %d)", ret);
 			pb_panic(PB_PANIC_REASON_PRF_LOAD_FAIL(ret));
 		}
-	}
-
-	/* reset loop counter handling */
-	rst_loop_cnt = pb_bootbit_reset_loop_cnt_get();
-	if (rst_loop_cnt == PB_BOOTBIT_RESET_LOOP_CNT_MAX) {
-		LOG_ERR("Reset loop detected");
-		pb_bootbit_reset_loop_cnt_set(0U);
-		pb_panic(PB_PANIC_REASON_RESET_LOOP);
-	} else {
-		rst_loop_cnt++;
-		pb_bootbit_reset_loop_cnt_set(rst_loop_cnt);
 	}
 
 	/* load firmware */
