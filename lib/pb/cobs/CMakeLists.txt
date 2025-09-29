@@ -1,6 +1,5 @@
 # Copyright (c) 2025 Core Devices LLC
 # SPDX-License-Identifier: Apache-2.0
 
-rsource "bootbit/Kconfig"
-rsource "cobs/Kconfig"
-rsource "fwjump/Kconfig"
+zephyr_library()
+zephyr_library_sources(cobs.c)

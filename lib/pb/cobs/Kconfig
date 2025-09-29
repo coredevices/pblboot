@@ -1,6 +1,7 @@
 # Copyright (c) 2025 Core Devices LLC
 # SPDX-License-Identifier: Apache-2.0
 
-rsource "bootbit/Kconfig"
-rsource "cobs/Kconfig"
-rsource "fwjump/Kconfig"
+config PB_COBS
+    bool "COBS library"
+    help
+      COBS encoding library.
