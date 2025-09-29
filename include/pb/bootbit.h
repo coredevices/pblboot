@@ -12,6 +12,8 @@
 
 /** Maximum firmware failure count value */
 #define PB_BOOTBIT_FW_FAIL_CNT_MAX    3U
+/** Maximum PRF failure count value */
+#define PB_BOOTBIT_PRF_FAIL_CNT_MAX   3U
 /** Maximum reset loop count value */
 #define PB_BOOTBIT_RESET_LOOP_CNT_MAX 7U
 
@@ -113,6 +115,21 @@ static inline void pb_bootbit_fw_fail_cnt_set(uint8_t cnt)
 	} else {
 		pb_bootbit_clr(PB_BOOTBIT_FW_START_FAIL_STRIKE_TWO);
 	}
+}
+
+/**
+ * @brief Get the PRF failure counter value
+ *
+ * @return Firmware failure counter value (0-3)
+ */
+static inline uint8_t pb_bootbit_prf_fail_cnt_get(void)
+{
+	uint8_t cnt;
+
+	cnt = (!!pb_bootbit_tst(PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_ONE) << 0U) +
+	      (!!pb_bootbit_tst(PB_BOOTBIT_RECOVERY_LOAD_FAIL_STRIKE_TWO) << 1U);
+
+	return cnt;
 }
 
 /**
