@@ -4,5 +4,3 @@
 build:
   kconfig: Kconfig
   cmake: .
-  settings:
-    board_root: .
