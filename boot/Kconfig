@@ -21,3 +21,9 @@ config PB_PRF_BUTTON_COMBO_TIME_MS
 	help
 	  Time in milliseconds that the PRF button combo must be held to trigger
 	  a PRF load.
+
+config PB_WATCHDOG_TIMEOUT_MS
+	int "Watchdog timeout (ms)"
+	default 10000
+	help
+	  Timeout in milliseconds for the watchdog timer.

@@ -18,6 +18,9 @@
 		pb,btn-up = &btn_up;
 		pb,btn-center = &btn_center;
 		pb,btn-down = &btn_down;
+
+		/* watchdog */
+		pb,wdt = &wdt;
 	};
 };
 

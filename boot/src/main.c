@@ -6,6 +6,7 @@
 #include "buttons.h"
 #include "firmware.h"
 #include "panic.h"
+#include "watchdog.h"
 
 #include <inttypes.h>
 
@@ -34,6 +35,12 @@ int main(void)
 	}
 
 	pb_panic_init();
+
+	ret = pb_watchdog_init();
+	if (ret < 0) {
+		LOG_ERR("Failed to initialize watchdog module (err %d)", ret);
+		pb_panic(PB_PANIC_REASON_INIT_FAIL);
+	}
 
 	ret = pb_firmware_init();
 	if (ret < 0) {
@@ -98,6 +105,9 @@ int main(void)
 			prf_requested = true;
 		}
 	}
+
+	/* one last feed */
+	(void)pb_watchdog_feed();
 
 	if (prf_requested) {
 		ret = pb_firmware_load_prf();
