@@ -3,13 +3,13 @@
 
 manifest:
   remotes:
-    - name: teslabs
-      url-base: https://github.com/teslabs
+    - name: zephyr
+      url-base: https://github.com/zephyrproject-rtos
 
   projects:
     - name: zephyr
-      remote: teslabs
-      revision: sf32lb52x-pblboot
+      remote: zephyr
+      revision: 3af17bf8b1a18e7eb049a0b1c97594cf54f7e854
       import:
         name-allowlist:
           - cmsis_6
