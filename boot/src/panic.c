@@ -5,6 +5,7 @@
 
 #include "buttons.h"
 #include "panic.h"
+#include "watchdog.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -45,6 +46,8 @@ void FUNC_NORETURN pb_panic(pb_panic_reason_t reason)
 			LOG_INF("Resetting system due to button press");
 			sys_reboot(SYS_REBOOT_COLD);
 		}
+
+		(void)pb_watchdog_feed();
 
 		k_msleep(10);
 	}

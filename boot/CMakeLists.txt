@@ -16,4 +16,5 @@ target_sources(
     src/firmware.c
     src/main.c
     src/panic.c
+    src/watchdog.c
 )
