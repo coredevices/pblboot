@@ -40,8 +40,15 @@ jobs:
         working-directory: pblboot
         run: |
           mkdir artifacts
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            VERSION="pr-${{ github.event.number }}"
+          else
+            VERSION="${{ github.ref_name }}"
+          fi
+
           cp twister-out/pt2*/zephyr/pblboot/boot/boot.default/zephyr/zephyr.hex \
-             artifacts/pblboot-pt2-${{ github.ref_name }}.hex
+             artifacts/pblboot-pt2-$VERSION.hex
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
