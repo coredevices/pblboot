@@ -13,6 +13,7 @@ target_sources(
   app
   PRIVATE
     src/buttons.c
+    src/charger.c
     src/firmware.c
     src/main.c
     src/panic.c

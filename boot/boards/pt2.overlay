@@ -19,6 +19,9 @@
 		pb,btn-center = &btn_center;
 		pb,btn-down = &btn_down;
 
+		/* charger */
+		pb,charger = &npm1300_charger;
+
 		/* watchdog */
 		pb,wdt = &wdt;
 	};
@@ -51,4 +54,22 @@
 			};
 		};
 	};
+};
+
+/* disable unused peripherals that would be automatically enabled */
+
+&i2c2 {
+	status = "disabled";
+};
+
+&i2c3 {
+	status = "disabled";
+};
+
+&i2c4 {
+	status = "disabled";
+};
+
+&npm1300_gpio {
+	status = "disabled";
 };
