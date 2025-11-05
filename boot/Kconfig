@@ -27,3 +27,11 @@ config PB_WATCHDOG_TIMEOUT_MS
 	default 10000
 	help
 	  Timeout in milliseconds for the watchdog timer.
+
+config PB_VBAT_MIN_BOOT_MV
+	int "Minimal battery level to allow boot (mV)"
+	default 3300
+	help
+	  Minimal battery voltage in millivolts required to allow booting the
+	  system. If watch is plugged in boot will be allowed regardless of
+	  the battery voltage.

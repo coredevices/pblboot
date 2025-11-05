@@ -4,6 +4,7 @@
  */
 
 #include "buttons.h"
+#include "charger.h"
 #include "firmware.h"
 #include "panic.h"
 #include "watchdog.h"
@@ -42,10 +43,22 @@ int main(void)
 		pb_panic(PB_PANIC_REASON_INIT_FAIL);
 	}
 
+	ret = pb_charger_init();
+	if (ret < 0) {
+		LOG_ERR("Failed to initialize charger module (err %d)", ret);
+		pb_panic(PB_PANIC_REASON_INIT_FAIL);
+	}
+
 	ret = pb_firmware_init();
 	if (ret < 0) {
 		LOG_ERR("Failed to initialize firmware module (err %d)", ret);
 		pb_panic(PB_PANIC_REASON_INIT_FAIL);
+	}
+
+	/* check battery/plugged in status to allow booting or not */
+	if (!pb_charger_allow_boot()) {
+		LOG_ERR("Boot not allowed: battery too low and plugged in");
+		pb_panic(PB_PANIC_REASON_BATTERY_LOW);
 	}
 
 	/* reset loop counter handling */

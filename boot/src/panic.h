@@ -21,6 +21,9 @@
 #define PB_PANIC_REASON_PRF_UNSTABLE       0x00000002UL
 /** Reset loop detected */
 #define PB_PANIC_REASON_RESET_LOOP         0x00000003UL
+/** Battery too low to boot */
+#define PB_PANIC_REASON_BATTERY_LOW        0x00000004UL
+
 /**
  * Firmware load failure
  * @param err Error code (negative errno value)
