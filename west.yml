@@ -3,13 +3,13 @@
 
 manifest:
   remotes:
-    - name: zephyr
-      url-base: https://github.com/zephyrproject-rtos
+    - name: coredevices
+      url-base: https://github.com/coredevices
 
   projects:
     - name: zephyr
-      remote: zephyr
-      revision: 3af17bf8b1a18e7eb049a0b1c97594cf54f7e854
+      remote: coredevices
+      revision: pblboot
       import:
         name-allowlist:
           - cmsis_6
