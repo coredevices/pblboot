@@ -50,7 +50,7 @@
 
 			prf: partition@a20000 {
 				label = "prf";
-				reg = <0xa20000 DT_SIZE_K(512)>;
+				reg = <0xa20000 DT_SIZE_K(576)>;
 			};
 		};
 	};
