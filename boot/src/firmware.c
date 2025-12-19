@@ -41,19 +41,39 @@ static const struct device *flash = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_control
 
 static int firmware_header_get(uint32_t address, struct firmware_header *hdr)
 {
-	int ret;
+	for (unsigned int retry = 0; retry < 5; retry++) {
+		int ret;
 
-	ret = flash_read(flash, address, hdr, sizeof(*hdr));
-	if (ret < 0) {
-		LOG_ERR("Failed to read from flash (err %d)", ret);
-		return ret;
+		LOG_INF("Fetch header (retry=%d)", retry);
+
+		ret = flash_read(flash, address, hdr, sizeof(*hdr));
+		if (ret < 0) {
+			LOG_ERR("Failed to read from flash (err %d)", ret);
+			return ret;
+		}
+
+		for (size_t i = 0; i < sizeof(*hdr); i++) {
+			LOG_INF("%02x", ((uint8_t *)hdr)[i]);
+		}
+
+		if (hdr->magic != PBLBOOT_MAGIC) {
+			LOG_ERR("Invalid firmware header magic");
+			continue;
+		}
+
+		if (hdr->header_length != sizeof(*hdr)) {
+			LOG_ERR("Invalid firmware header length");
+			continue;
+		}
+
+		LOG_INF("Firmware header: timestamp=%" PRIu64 ", start_offset=0x%" PRIx32
+			", length=0x%" PRIx32 ", crc=0x%" PRIx32,
+			hdr->timestamp, hdr->start_offset, hdr->length, hdr->crc);
+
+		return 0;
 	}
 
-	if ((hdr->magic != PBLBOOT_MAGIC) || (hdr->header_length != sizeof(*hdr))) {
-		return -EINVAL;
-	}
-
-	return 0;
+	return -EINVAL;
 }
 
 static int firmware_validate(uint32_t address, const struct firmware_header *hdr)
@@ -81,6 +101,8 @@ static int firmware_validate(uint32_t address, const struct firmware_header *hdr
 	}
 
 	if (crc != hdr->crc) {
+		LOG_ERR("Firmware CRC mismatch (calculated 0x%08x, expected 0x%08x)",
+			crc, hdr->crc);
 		return -EIO;
 	}
 
