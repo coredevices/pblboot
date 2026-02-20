@@ -9,6 +9,10 @@ config PB_BOOTBIT
 
 if PB_BOOTBIT
 
+module = PB_BOOTBIT
+module-str = pb_bootbit
+source "subsys/logging/Kconfig.template.log_config"
+
 config PB_BOOTBIT_SF32LB
     bool "Boot bit SF32LB backend"
     default y if SOC_FAMILY_SF32
