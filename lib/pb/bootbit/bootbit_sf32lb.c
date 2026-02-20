@@ -62,7 +62,7 @@ void pb_bootbit_init(void)
 {
 	if (!pb_bootbit_tst(PB_BOOTBIT_INITIALIZED)) {
 		LOG_DBG("Boot bits not initialized, initializing now");
-		sys_write32(RTC_BASE + RTC_BKP2R, BIT(PB_BOOTBIT_INITIALIZED));
+		sys_write32(BIT(PB_BOOTBIT_INITIALIZED), RTC_BASE + RTC_BKP2R);
 	}
 
 	LOG_DBG("Boot bits: 0x%08" PRIx32, sys_read32(RTC_BASE + RTC_BKP2R));
