@@ -56,6 +56,10 @@
 	};
 };
 
+&wdt {
+	sifli,reset-all;
+};
+
 /* disable unused peripherals that would be automatically enabled */
 
 &i2c2 {
