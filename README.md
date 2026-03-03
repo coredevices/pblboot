@@ -118,6 +118,28 @@ The bootloader validates both slots and selects firmware based on:
    - If only one slot is valid: Boot the valid slot
    - If no slots are valid: Attempt to load PRF
 
+### Bootloader Version Information
+
+The bootloader stores its version at a fixed location in flash so that firmware
+can read it at runtime without direct access to the bootloader binary. The
+version structure is placed at the last 8 bytes of the boot partition.
+
+#### Version Structure
+
+```c
+struct pb_version {
+    uint32_t magic;    // 0x50425652 ("PBVR")
+    uint8_t major;     // Major version number
+    uint8_t minor;     // Minor version number
+    uint8_t patch;     // Patch level
+    uint8_t tweak;     // Tweak version
+}
+```
+
+The `magic` field allows firmware to verify that valid version data is present.
+The version numbers are automatically populated from the application version
+defined in `boot/VERSION`.
+
 ### Boot Sequence Overview
 
 ```mermaid
