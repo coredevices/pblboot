@@ -17,5 +17,8 @@ target_sources(
     src/firmware.c
     src/main.c
     src/panic.c
+    src/version.c
     src/watchdog.c
 )
+
+zephyr_linker_sources(SECTIONS version.ld)
