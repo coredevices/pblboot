@@ -13,12 +13,15 @@ target_sources(
   app
   PRIVATE
     src/buttons.c
-    src/charger.c
     src/firmware.c
     src/main.c
     src/panic.c
     src/version.c
     src/watchdog.c
 )
+
+if(CONFIG_PB_CHARGER)
+  target_sources(app PRIVATE src/charger.c)
+endif()
 
 zephyr_linker_sources(SECTIONS version.ld)

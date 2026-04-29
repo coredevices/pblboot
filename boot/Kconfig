@@ -28,9 +28,16 @@ config PB_WATCHDOG_TIMEOUT_MS
 	help
 	  Timeout in milliseconds for the watchdog timer.
 
+config PB_CHARGER
+	bool "Enable charger support"
+	default y
+	help
+	  Enable support for the battery charger.
+
 config PB_VBAT_MIN_BOOT_MV
 	int "Minimal battery level to allow boot (mV)"
 	default 3300
+	depends on PB_CHARGER
 	help
 	  Minimal battery voltage in millivolts required to allow booting the
 	  system. If watch is plugged in boot will be allowed regardless of
