@@ -43,11 +43,13 @@ int main(void)
 		pb_panic(PB_PANIC_REASON_INIT_FAIL);
 	}
 
+#ifdef CONFIG_PB_CHARGER
 	ret = pb_charger_init();
 	if (ret < 0) {
 		LOG_ERR("Failed to initialize charger module (err %d)", ret);
 		pb_panic(PB_PANIC_REASON_INIT_FAIL);
 	}
+#endif /* CONFIG_PB_CHARGER */
 
 	ret = pb_firmware_init();
 	if (ret < 0) {
@@ -55,11 +57,13 @@ int main(void)
 		pb_panic(PB_PANIC_REASON_INIT_FAIL);
 	}
 
+#ifdef CONFIG_PB_CHARGER
 	/* check battery/plugged in status to allow booting or not */
 	if (!pb_charger_allow_boot()) {
 		LOG_ERR("Boot not allowed: battery too low and plugged in");
 		pb_panic(PB_PANIC_REASON_BATTERY_LOW);
 	}
+#endif /* CONFIG_PB_CHARGER */
 
 	/* reset loop counter handling */
 	rst_loop_cnt = pb_bootbit_reset_loop_cnt_get();
