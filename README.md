@@ -98,12 +98,45 @@ Each firmware image begins with a structured header:
 struct firmware_header {
     uint32_t magic;         // Magic number (0x96f3b83d)
     uint32_t header_length; // Size of header structure
-    uint64_t timestamp;     // Build timestamp for version comparison
+    uint64_t priority;      // Boot priority (see below)
     uint32_t start_offset;  // Offset to actual firmware code
     uint32_t length;        // Firmware binary size
     uint32_t crc;           // CRC32-IEEE checksum
 }
 ```
+
+Note: the header itself is not covered by `crc`, which only protects the
+firmware image starting at `start_offset`.
+
+#### Boot Priority
+
+The `priority` field is an unsigned 64-bit boot priority: between two valid
+slots, the bootloader boots the one with the higher value. The bootloader
+does not interpret the field beyond this comparison; the encoding below is a
+convention of the build tooling.
+
+The top byte (bits 63-56) selects a priority band:
+
+| Band    | Bits 63-56 | Bits 55-32                    | Bits 31-0             |
+|---------|------------|-------------------------------|-----------------------|
+| Release | `0x01`     | Major, minor, patch (8b each) | Tag commit timestamp  |
+| Dev     | `0x80`     | 0                             | Build wall-clock time |
+
+- **Release**: builds from an exact release tag (`vX[.Y[.Z]]`, optionally
+  `-betaN`/`-rcN`) encode the version so that a higher version always wins
+  regardless of build order (releases may be built from branches out of
+  order). The commit timestamp breaks ties within a version (e.g. beta vs
+  final).
+- **Dev**: any other build (untagged commit, dirty tree). Dev images outrank
+  all release images, so a freshly flashed dev build always boots; among dev
+  builds, the most recently built one wins.
+
+Bands `0x02`-`0x7f` are reserved for future release encodings and
+`0x81`-`0xff` for overrides that must outrank dev builds.
+
+A consequence of the dev band is that a device running a dev image will not
+boot an OTA-installed release until the dev slot is invalidated (e.g. by
+entering PRF, which invalidates both slots, or by a flash erase).
 
 #### Slot Selection Algorithm
 
@@ -114,7 +147,7 @@ The bootloader validates both slots and selects firmware based on:
    - CRC32-IEEE checksum verification of the entire firmware image
 
 2. **Selection Priority**:
-   - If both slots are valid: Boot the slot with the newer timestamp
+   - If both slots are valid: Boot the slot with the higher boot priority
    - If only one slot is valid: Boot the valid slot
    - If no slots are valid: Attempt to load PRF
 

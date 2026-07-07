@@ -30,7 +30,7 @@ LOG_MODULE_DECLARE(pblboot, CONFIG_PBLBOOT_LOG_LEVEL);
 struct firmware_header {
 	uint32_t magic;
 	uint32_t header_length;
-	uint64_t timestamp;
+	uint64_t priority;
 	uint32_t start_offset;
 	uint32_t length;
 	uint32_t crc;
@@ -142,8 +142,8 @@ int pb_firmware_load(void)
 			slot0_valid = true;
 			slot0_load_address =
 				CONFIG_FLASH_BASE_ADDRESS + SLOT0_ADDR + slot0_hdr.start_offset;
-			LOG_INF("slot0 firmware valid (0x%" PRIx32 ", %" PRIu64 ")",
-				slot0_load_address, slot0_hdr.timestamp);
+			LOG_INF("slot0 firmware valid (0x%" PRIx32 ", 0x%" PRIx64 ")",
+				slot0_load_address, slot0_hdr.priority);
 		}
 	}
 
@@ -155,13 +155,13 @@ int pb_firmware_load(void)
 			slot1_valid = true;
 			slot1_load_address =
 				CONFIG_FLASH_BASE_ADDRESS + SLOT1_ADDR + slot1_hdr.start_offset;
-			LOG_INF("slot1 firmware valid (0x%" PRIx32 ", %" PRIu64 ")",
-				slot1_load_address, slot1_hdr.timestamp);
+			LOG_INF("slot1 firmware valid (0x%" PRIx32 ", 0x%" PRIx64 ")",
+				slot1_load_address, slot1_hdr.priority);
 		}
 	}
 
 	if (slot0_valid) {
-		if (slot1_valid && (slot1_hdr.timestamp > slot0_hdr.timestamp)) {
+		if (slot1_valid && (slot1_hdr.priority > slot0_hdr.priority)) {
 			LOG_INF("Loading slot1 firmware @ 0x%" PRIx32, slot1_load_address);
 			pb_fwjump(slot1_load_address);
 		} else {
@@ -169,7 +169,7 @@ int pb_firmware_load(void)
 			pb_fwjump(slot0_load_address);
 		}
 	} else if (slot1_valid) {
-		if (slot0_valid && (slot0_hdr.timestamp > slot1_hdr.timestamp)) {
+		if (slot0_valid && (slot0_hdr.priority > slot1_hdr.priority)) {
 			LOG_INF("Loading slot0 firmware @ 0x%" PRIx32, slot0_load_address);
 			pb_fwjump(slot0_load_address);
 		} else {
