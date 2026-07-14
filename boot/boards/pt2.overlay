@@ -60,6 +60,10 @@
 	sifli,reset-all;
 };
 
+&usart1 {
+	current-speed = <115200>;
+};
+
 /* disable unused peripherals that would be automatically enabled */
 
 &i2c2 {
